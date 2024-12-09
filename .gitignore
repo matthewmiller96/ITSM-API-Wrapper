@@ -2,3 +2,4 @@
 .env
 addresses.json
 config/fedex/address.json
+config/fedex/addresses.json
