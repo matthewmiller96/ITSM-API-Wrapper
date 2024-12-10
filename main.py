@@ -11,7 +11,7 @@ app.config["JSON_SORT_KEYS"] = False
 fedex = FedExAPI()
 
 @app.route("/api", methods=["GET"])
-def fedex_endpoints():
+def get_api_documentation():
     app.logger.debug("Fetching API documentation")
     
     documentation = {

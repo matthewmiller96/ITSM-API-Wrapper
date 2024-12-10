@@ -2,7 +2,7 @@ import requests
 import os
 import json
 import logging
-from typing import Dict, Any, Literal
+from typing import Dict, Any
 from dotenv import load_dotenv
 from datetime import datetime
 from requests.exceptions import HTTPError
