@@ -35,7 +35,7 @@ generate_jwt_secret() {
 echo "🚀 Starting setup..."
 
 # Create config directories first
-create_and_verify_config_dirs
+create_config_dirs
 
 # Virtual environment setup
 if confirm_step "create a virtual environment"; then
