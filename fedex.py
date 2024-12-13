@@ -28,10 +28,10 @@ class FedExAPI:
         load_dotenv(dotenv_path=env_path)
         
         #Get environment variables
-        self.client_id = os.environ.get("client_id")
-        self.client_secret = os.environ.get("client_secret")
-        self.base_url = os.environ.get("base_url")
-        self.account_number = os.environ.get("account_number")
+        self.client_id = os.environ.get("FEDEX_CLIENT_ID")
+        self.client_secret = os.environ.get("FEDEX_CLIENT_SECRET")
+        self.base_url = os.environ.get("FEDEX_BASE_URL")
+        self.account_number = os.environ.get("FEDEX_ACCOUNT_NUMBER")
         
         # verify environment variables are set
         missing_vars = [var for var, val in {
@@ -180,9 +180,17 @@ class FedExAPI:
                 timeout=30
             )
             response.raise_for_status()
+            response_json = response.json()
+            body = {
+                "1_transactionId": response_json.get("transactionId"),
+                "2_shipDatestamp": response_json.get("output", {}).get("transactionShipments", [{}])[0].get("shipDatestamp"),
+                "3_trackingNumber": response_json.get("output", {}).get("transactionShipments", [{}])[0].get("pieceResponses", [{}])[0].get("trackingNumber"),
+                "4_serviceType": response_json.get("output", {}).get("transactionShipments", [{}])[0].get("serviceType"),
+                "5_encodedLabel": response_json.get("output", {}).get("transactionShipments", [{}])[0].get("pieceResponses", [{}])[0].get("packageDocuments", [{}])[0].get("encodedLabel"),
+            }
 
             self.logger.info("Successfully created FedEx shipment")
-            return response.json()
+            return body
         except requests.exceptions.RequestException as e:
             self.logger.error(f"Failed to create shipment: {str(e)}")
             raise HTTPError(f"Failed to create shipment: {str(e)}")
