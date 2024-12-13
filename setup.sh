@@ -23,7 +23,8 @@ create_config_dirs() {
     if [ ! -d "config/fedex" ]; then
         echo "${RED}Failed to verify config directory${NC}"
         exit 1
-    }
+    fi
+}
 
 
 generate_jwt_secret() {
@@ -34,7 +35,7 @@ generate_jwt_secret() {
 echo "🚀 Starting setup..."
 
 # Create config directories first
-create_config_dirs
+create_and_verify_config_dirs
 
 # Virtual environment setup
 if confirm_step "create a virtual environment"; then
