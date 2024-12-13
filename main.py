@@ -2,15 +2,32 @@ from collections import OrderedDict
 import json
 import logging
 import datetime
-
+import os
 from flask import Flask, request, jsonify
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from fedex import FedExAPI
+import datetime
 
 app = Flask(__name__)
+
+#add JWT configuration
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 app.config["JSON_SORT_KEYS"] = False
+jwt = JWTManager(app)
 fedex = FedExAPI()
 
+@app.route("/api/login", methods=["POST"])
+def login():
+    username = request.json.get("client_id", None)
+    password = request.json.get("client_secret", None)
+    if username != os.environ.get("USERNAME") or password != os.environ.get("PASSWORD"):
+        return jsonify({"msg": "Bad username or password"}), 401
+        
+    access_token = create_access_token(identity=username)
+    return jsonify({"access_token": access_token}), 200
+
 @app.route("/api", methods=["GET"])
+@jwt_required()
 def get_api_documentation():
     app.logger.debug("Fetching API documentation")
     
@@ -64,6 +81,7 @@ def get_api_documentation():
     return jsonify(documentation), 200
 
 @app.route("/api/fedex/ship", methods=["POST"])
+@jwt_required()
 def fedex_create_shipment():
     try:
         # Validate request body
