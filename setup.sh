@@ -7,25 +7,23 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # Helper functions
-create_config_dirs() {
-    mkdir -p config/fedex || {
-        echo "${RED}Failed to create config directories${NC}"
-        exit 1
-    }
-}
-
-# Call create_config_dirs before first file operation
-if confirm_step "set up FedEx configuration"; then
-    echo "⚙️ Setting up configuration..."
-    create_config_dirs
-    
-    # Rest of FedEx config code...
-fi
-
 confirm_step() {
     read -r -p "🤔 Do you want to proceed with $1? (y/N) " REPLY
     echo
     [[ $REPLY =~ ^[Yy]$ ]]
+}
+
+create_config_dirs() {
+    echo "Creating config directories..."
+    mkdir -p config/fedex || {
+        echo "${RED}Failed to create config directories${NC}"
+        exit 1
+    }
+    # Verify directory exists
+    if [ ! -d "config/fedex" ]; then
+        echo "${RED}Failed to verify config directory${NC}"
+        exit 1
+    }
 }
 
 generate_jwt_secret() {
@@ -34,6 +32,9 @@ generate_jwt_secret() {
 
 # Welcome message
 echo "🚀 Starting setup..."
+
+# Create config directories first
+create_config_dirs
 
 # Virtual environment setup
 if confirm_step "create a virtual environment"; then
