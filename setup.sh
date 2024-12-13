@@ -24,7 +24,7 @@ create_config_dirs() {
         echo "${RED}Failed to verify config directory${NC}"
         exit 1
     }
-}
+
 
 generate_jwt_secret() {
     python3 -c 'import secrets; print(secrets.token_urlsafe(32))'
