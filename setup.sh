@@ -7,6 +7,21 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # Helper functions
+create_config_dirs() {
+    mkdir -p config/fedex || {
+        echo "${RED}Failed to create config directories${NC}"
+        exit 1
+    }
+}
+
+# Call create_config_dirs before first file operation
+if confirm_step "set up FedEx configuration"; then
+    echo "⚙️ Setting up configuration..."
+    create_config_dirs
+    
+    # Rest of FedEx config code...
+fi
+
 confirm_step() {
     read -r -p "🤔 Do you want to proceed with $1? (y/N) " REPLY
     echo
